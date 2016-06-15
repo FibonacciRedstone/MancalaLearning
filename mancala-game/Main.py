@@ -12,14 +12,15 @@ def showBoard(board):
     print line3
 
 def main():
-    potArray = [Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot()]
+    potArray = [Pot(1), Pot(1), Pot(1), Pot(1), Pot(1), Pot(1), Pot(1), Pot(1), Pot(1), Pot(1), Pot(1), Pot(1)]
     board = Board(potArray)
 
-    for i in range(0, 1000001):
-        board.test()
+    inGame = True
+    while inGame:
+        gameOver = board.test()
         showBoard(board)
-        gameOver = board.checkGameOver()
         if gameOver == 1:
+            inGame = False
             if board.storeP2 > board.storeP1:
                 print "Player 2 Won"
             elif board.storeP1 > board.storeP2:

@@ -5,14 +5,15 @@ class Board:
     potArray = []
     storeP1 = 0
     storeP2 = 0
-    currentPlayer = 1
+    selectedPlayer = 1
+    playNum = 0
 
     def __init__(self, pots):
         self.potArray = pots
 
     def test(self):
         potIndex = self.askForIndex()
-        self.moveStonesAtIndex(potIndex)
+        return self.moveStonesAtIndex(potIndex)
 
 
 
@@ -28,20 +29,25 @@ class Board:
         maxIndex1 = (length - (length/2))
 
         lastPot = (index + stoneNum)
-
-        if index <= maxIndex1 and lastPot >= maxIndex1:
-            for i in range(index+1, lastPot+1, 1):
+        lastCheck = 0
+        i = index + 1
+        while i <= lastPot:
+            if i == (maxIndex1):
+                self.storeP1+=1
+                if lastPot == maxIndex1:
+                    self.playNum-=1
+                    lastCheck = 1
+                #lastPot -= 1
+                #lastCheck = 1
+            if (i) >= length and lastCheck == 0:
+                self.potArray[i - length].stoneNum += 1
+            elif lastCheck == 0:
+                self.potArray[i].stoneNum += 1
                 if i == (maxIndex1):
-                    self.storeP1+=1
-                    #TODO implement turn rule
-                if (i-1) >= length:
-                    self.potArray[(i-1) - length].stoneNum += 1
-                else:
-                    self.potArray[i-1].stoneNum += 1
-
-            self.potArray[index].stoneNum = 0
-            self.checkPots()
-
+                    lastPot-=1
+            lastCheck = 0
+            i+=1
+        self.potArray[index].stoneNum = 0
 
     def player2Stones(self, index, stoneNum):
 
@@ -50,18 +56,24 @@ class Board:
         maxIndex1 = (length / 2)
         maxIndex2 = (length - 1)
 
-        if index >= maxIndex1 and (index + stoneNum) >= length:
-            for i in range(index + 1, (index + stoneNum)+1, 1):
-                if i == (length):
-                    self.storeP2 += 1
-                    # TODO implement turn rule
-                if i >= length:
-                    self.potArray[i-length].stoneNum += 1
-                else:
-                    self.potArray[i].stoneNum += 1
-
-            self.potArray[index].stoneNum = 0
-            self.checkPots()
+        lastPot = (index + stoneNum)
+        lastCheck = 0
+        i = index + 1
+        while i >= index+1 and i < lastPot+1:
+            if i == (length):
+                self.storeP2 += 1
+                if lastPot == length:
+                    self.playNum-=1
+                    lastCheck = 1
+                #lastPot -= 1
+                lastCheck = 1
+            if i > length:
+                self.potArray[i - length - 1].stoneNum += 1
+            elif lastCheck == 0:
+                self.potArray[i].stoneNum += 1
+            lastCheck = 0
+            i+=1
+        self.potArray[index].stoneNum -=stoneNum
 
     def setCurrentPlayer(self, index):
 
@@ -71,27 +83,48 @@ class Board:
         maxP1 = (length - (length/2))
 
         if index >= minP1 and index <= maxP1:
-            self.currentPlayer = 1
+            self.selectedPlayer = 1
         else:
-            self.currentPlayer = 2
+            self.selectedPlayer = 2
 
 
     def moveStonesAtIndex(self, index):
         stone = self.potArray[index]
+        self.checkPots()
         if stone.hasStones:
             stoneNum = stone.stoneNum
             self.setCurrentPlayer(index)
-            self.player1Stones(index, stoneNum)
-            self.player2Stones(index, stoneNum)
-            #self.printValues()
+            if self.selectedPlayer == 1:
+                self.player1Stones(index, stoneNum)
+            else:
+                self.player2Stones(index, stoneNum)
+            self.playNum += 1
+            return self.checkGameOver()
         else:
             print "Pot does not contain any stones!"
 
 
-
     def askForIndex(self):
-        inputIndex = input("Input Index: ")
-        return inputIndex
+        if self.playNum%2 == 0:
+            inputIndex = input("P1 Input Index: ")
+            if inputIndex > 5 and inputIndex < 12:
+                print "Incorrect Index"
+                return self.askForIndex()
+            else:
+                self.selectedPlayer = 1
+                return inputIndex
+        else:
+            inputIndex = input("P2 Input Index: ")
+            if inputIndex < 6 and inputIndex >= 0:
+                print "Incorrect Index"
+                return self.askForIndex()
+            else:
+                self.selectedPlayer = 2
+                return inputIndex
+
+
+
+
 
     def checkPots(self):
         for pot in self.potArray:
@@ -101,6 +134,7 @@ class Board:
                 pot.hasStones = True
 
     def checkGameOver(self):
+        self.checkPots()
         if not self.potArray[0].hasStones and not self.potArray[1].hasStones and not self.potArray[2].hasStones and not self.potArray[3].hasStones and not self.potArray[4].hasStones and not self.potArray[5].hasStones:
             return 1
         if not self.potArray[11].hasStones and not self.potArray[10].hasStones and not self.potArray[9].hasStones and not \
