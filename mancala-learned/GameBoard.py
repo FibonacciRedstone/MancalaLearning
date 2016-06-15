@@ -1,15 +1,25 @@
 from GamePot import Pot
+from Player import Player
+from random import randint
+from random import shuffle
+import itertools
 
 class Board:
 
     potArray = []
+    playerArray = []
+
+    gameStates = [[]]
+
     storeP1 = 0
     storeP2 = 0
     selectedPlayer = 1
     playNum = 0
 
-    def __init__(self, pots):
+    def __init__(self, pots, amountOfPlayers):
         self.potArray = pots
+        self.gameStates = self.generateGameStates()
+        self.generatePlayers(amountOfPlayers)
 
     def test(self):
         potIndex = self.askForIndex()
@@ -17,9 +27,48 @@ class Board:
 
 
 
+    def generateGameStates(self):
+        gameStates = []
+
+        permList = [0, 0, 0, 0, 0, 0]
+        for i in range(0, 6):
+            comb = self.getPermutations(permList, 6)
+            for perm in comb:
+                gameStates.append(perm)
+            permList[i] = 1
+        gameStates.append(permList)
+        del gameStates[0]
+        gameStates = self.randomizeList(gameStates)
+        return gameStates
+
+    def randomizeList(self, inputArray):
+        randomKey = range(0, len(inputArray)-1)
+        shuffle(randomKey)
+        outputArray = range(0, len(inputArray)-1)
+
+        index = 0
+        for i in randomKey:
+            outputArray[index] = inputArray[i]
+            index+=1
+        return outputArray
 
 
+    def getPermutations(self, inputArray, interable):
+        perms = list(itertools.permutations(inputArray, interable))
+        returnPerms = list()
 
+        for permutation in perms:
+            if len(returnPerms) > 0:
+                keepPerm = True
+                for perm in returnPerms:
+                    if perm == permutation:
+                        keepPerm = False
+                        break
+                if keepPerm == True:
+                    returnPerms.append(permutation)
+            else:
+                returnPerms.append(permutation)
+        return returnPerms
 
 
     def player1Stones(self, index, stoneNum):
@@ -152,3 +201,24 @@ class Board:
             print "Pot" + str(index)
             print i.stoneNum
             index += 1
+
+    def generatePlayers(self, playerAmount):
+        for i in range(0, playerAmount):
+            player = Player(self.generateMoveSet())
+            self.playerArray.append(player)
+
+    def generateMoveSet(self):
+        moveSet = []
+        for state in self.gameStates:
+            movesArray = []
+            for i in range(0, len(state)):
+                if state[i] == 1:
+                    movesArray.append(i)
+            if len(movesArray) > 1:
+                rand = randint(0, len(movesArray)-1)
+                move = movesArray[rand]
+                moveSet.append(move)
+            else:
+                move = movesArray[0]
+                moveSet.append(move)
+        return moveSet

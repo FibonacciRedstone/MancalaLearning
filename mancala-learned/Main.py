@@ -14,7 +14,7 @@ def showBoard(board):
 def main():
     numPerPot = 4
     potArray = [Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot)]
-    board = Board(potArray)
+    board = Board(potArray, 3)
 
     inGame = True
     while inGame:
