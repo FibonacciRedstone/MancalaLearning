@@ -1,5 +1,5 @@
-from Pot import Pot
-from Board import Board
+from GamePot import Pot
+from GameBoard import Board
 
 
 def showBoard(board):
@@ -12,7 +12,8 @@ def showBoard(board):
     print line3
 
 def main():
-    potArray = [Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot(), Pot()]
+    numPerPot = 4
+    potArray = [Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot), Pot(numPerPot)]
     board = Board(potArray)
 
     inGame = True
