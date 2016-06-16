@@ -2,6 +2,7 @@ from GamePot import Pot
 from Player import Player
 from random import randint
 from random import shuffle
+import math
 import itertools
 
 class Board:
@@ -11,17 +12,41 @@ class Board:
 
     gameStates = [[]]
 
+    player1 = Player([])
+    player2 = Player([])
+
+    player1State = [0, 0, 0, 0, 0, 0]
+    player2State = [0, 0, 0, 0, 0, 0]
+
+    player1MoveSet = []
+    player2MoveSet = []
+
     storeP1 = 0
     storeP2 = 0
     selectedPlayer = 1
     playNum = 0
 
     def __init__(self, pots, amountOfPlayers):
+        self.player1MoveSet = []
+        self.player2MoveSet = []
         self.potArray = pots
         self.gameStates = self.generateGameStates()
         self.generatePlayers(amountOfPlayers)
 
+    def setCurrentPlayers(self):
+        randInt1 = randint(0, len(self.playerArray) - 1)
+        self.player1 = self.playerArray[randInt1]
+        randInt2 = randint(0, len(self.playerArray) - 1)
+        self.player2 = self.playerArray[randInt2]
+
+    def setCurrentPlayerStates(self):
+
+        self.player1State = [self.potArray[0].hasStones, self.potArray[1].hasStones, self.potArray[2].hasStones, self.potArray[3].hasStones, self.potArray[4].hasStones, self.potArray[5].hasStones]
+        self.player2State = [self.potArray[6].hasStones, self.potArray[7].hasStones, self.potArray[8].hasStones, self.potArray[9].hasStones, self.potArray[10].hasStones, self.potArray[11].hasStones]
+
     def test(self):
+        self.setCurrentPlayers()
+        self.setCurrentPlayerStates()
         potIndex = self.askForIndex()
         return self.moveStonesAtIndex(potIndex)
 
@@ -89,7 +114,10 @@ class Board:
                 #lastPot -= 1
                 #lastCheck = 1
             if (i) >= length and lastCheck == 0:
-                self.potArray[i - length].stoneNum += 1
+                var = length
+                var = math.floor(i / length) * length
+                var = int(var)
+                self.potArray[i - var].stoneNum += 1
             elif lastCheck == 0:
                 self.potArray[i].stoneNum += 1
                 if i == (maxIndex1):
@@ -117,7 +145,10 @@ class Board:
                 #lastPot -= 1
                 lastCheck = 1
             if i > length:
-                self.potArray[i - length - 1].stoneNum += 1
+                var = length
+                var = math.floor(i/length)*length
+                var = int(var)
+                self.potArray[i - var - 1].stoneNum += 1
             elif lastCheck == 0:
                 self.potArray[i].stoneNum += 1
             lastCheck = 0
@@ -138,16 +169,19 @@ class Board:
 
 
     def moveStonesAtIndex(self, index):
-        stone = self.potArray[index]
+        pot = self.potArray[index]
         self.checkPots()
-        if stone.hasStones:
-            stoneNum = stone.stoneNum
-            self.setCurrentPlayer(index)
+        if pot.hasStones:
+            stoneNum = pot.stoneNum
+            #self.setCurrentPlayer(index)
             if self.selectedPlayer == 1:
                 self.player1Stones(index, stoneNum)
+                self.player1MoveSet.append(index)
             else:
                 self.player2Stones(index, stoneNum)
+                self.player2MoveSet.append(index)
             self.playNum += 1
+            self.setCurrentPlayerStates()
             return self.checkGameOver()
         else:
             print "Pot does not contain any stones!"
@@ -155,25 +189,15 @@ class Board:
 
     def askForIndex(self):
         if self.playNum%2 == 0:
-            inputIndex = input("P1 Input Index: ")
-            if inputIndex > 5 and inputIndex < 12:
-                print "Incorrect Index"
-                return self.askForIndex()
-            else:
-                self.selectedPlayer = 1
-                return inputIndex
+            #Player 1
+            inputIndex = self.generateMoveFromState(self.player1State)
+            self.selectedPlayer = 1
+            return inputIndex
         else:
-            inputIndex = input("P2 Input Index: ")
-            if inputIndex < 6 and inputIndex >= 0:
-                print "Incorrect Index"
-                return self.askForIndex()
-            else:
-                self.selectedPlayer = 2
-                return inputIndex
-
-
-
-
+            # Player 2
+            inputIndex = self.generateMoveFromState(self.player2State)+6
+            self.selectedPlayer = 2
+            return inputIndex
 
     def checkPots(self):
         for pot in self.potArray:
@@ -204,21 +228,27 @@ class Board:
 
     def generatePlayers(self, playerAmount):
         for i in range(0, playerAmount):
-            player = Player(self.generateMoveSet())
+            player = Player([])
             self.playerArray.append(player)
+
+
+
+    def generateMoveFromState(self, state):
+        movesArray = []
+        for i in range(0, len(state)):
+            if state[i] == 1:
+                movesArray.append(i)
+        if len(movesArray) > 1:
+            rand = randint(0, len(movesArray) - 1)
+            move = movesArray[rand]
+            return move
+        else:
+            move = movesArray[0]
+            return move
 
     def generateMoveSet(self):
         moveSet = []
         for state in self.gameStates:
-            movesArray = []
-            for i in range(0, len(state)):
-                if state[i] == 1:
-                    movesArray.append(i)
-            if len(movesArray) > 1:
-                rand = randint(0, len(movesArray)-1)
-                move = movesArray[rand]
-                moveSet.append(move)
-            else:
-                move = movesArray[0]
-                moveSet.append(move)
+            move = self.generateMoveFromState(state)
+            moveSet.append(move)
         return moveSet
