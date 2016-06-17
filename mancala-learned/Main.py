@@ -2,7 +2,8 @@ from GamePot import Pot
 from GameBoard import Board
 from Player import Player
 import itertools
-
+import math
+global currentIndex
 global gameStates
 
 def showBoard(board):
@@ -30,8 +31,18 @@ def main(numOfGames):
         if battleVar[1].stateMoveDictionary != {}:
             winningPlayerArray.append(battleVar[1])
 
-    combs = battleCombinations(winningPlayerArray)
-    return combs
+    winningPlayerAmount = 3
+    while winningPlayerAmount > 2:
+        combs = battleCombinations(winningPlayerArray)
+        winningPlayerArray = getTopPlayers(combs)
+        winningPlayerAmount = len(winningPlayerArray)
+    if len(winningPlayerArray) == 2:
+        if winningPlayerArray[0].winsAmount > winningPlayerArray[1].winsAmount:
+            return winningPlayerArray[0]
+        else:
+            return winningPlayerArray[1]
+    elif len(winningPlayerArray) == 1:
+        return winningPlayerArray[0]
 
 def battleCombinations(players):
     i = 0
@@ -59,12 +70,36 @@ def battleCombinations(players):
         del players[0]
     return newPlayerArray
 
+def getTopPlayers(inputPlayers):
+    choosingPercent = .5
+    outputSize = int(math.floor(len(inputPlayers)*choosingPercent))
+    outputPlayers = []
+    currentMax = Player()
+    currentMaxIndex = 0
+    for i in range(0, outputSize):
+        for j in range(0, len(inputPlayers)):
+            if inputPlayers[j].winsAmount > currentMax:
+                currentMax = inputPlayers[j]
+                currentMaxIndex = j
+        del inputPlayers[currentMaxIndex]
+        outputPlayers.append(currentMax)
+    blacklistArray = []
+    i = 0
+    while i < len(outputPlayers):
+        if outputPlayers[i].winsAmount == 0:
+            outputPlayers.remove(outputPlayers[i])
+        i+=1
+
+    return outputPlayers
+
+
 
 def createPotArray():
     pots = [Pot(), Pot(), Pot(), Pot(), Pot(), Pot(),Pot(), Pot(), Pot(), Pot(), Pot(), Pot()]
     return pots
 
 def battle(board, player1, player2):
+    global currentIndex
     wins = []
     inGame = True
     while inGame:
@@ -83,10 +118,11 @@ def battle(board, player1, player2):
                 player1.winsAmount += 1
                 player2.winsAmount += 1
 
-
             return (player1, player2)
             break
             break
+    currentIndex += 1
+    print currentIndex
     return wins
 
 
@@ -121,9 +157,12 @@ def generateGameStates():
     del gameStates[0]
     return gameStates
 
-#textFile = open("wins.txt", "w")
-sets = main(2)
-#textFile.close()
+textFile = open("bestway.txt", "w")
+set = main(36000)
+textFile.write(str(set.stateMoveDictionary))
+textFile.write("\n")
+textFile.write("Number Of Wins: " + str(set.winsAmount))
+textFile.close()
 
 
 
