@@ -1,7 +1,8 @@
 class Player:
 
-    moveSet = []
-    movesNumber = 0
+    stateMoveDictionary = {}
+    winsAmount = 0
 
-    def __init__(self, moves):
-        self.moveSet = moves
+    def __init__(self):
+        self.winsAmount = 0
+        self.stateMoveDictionary = {}
