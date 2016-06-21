@@ -1,9 +1,10 @@
-from GamePot import Pot
-from Player import Player
+import itertools
+import math
 from random import randint
 from random import shuffle
-import math
-import itertools
+
+from Player import Player
+
 
 class Board:
 
@@ -147,11 +148,19 @@ class Board:
             i+=1
         self.potArray[index].stoneNum -=stoneNum
 
+    def setCurrentPlayer(self):
+
+        if self.playNum % 2 == 0:
+            self.selectedPlayer = 1
+        else:
+            self.selectedPlayer = 2
+
 
     def moveStonesAtIndex(self, index):
         pot = self.potArray[index]
         self.checkPots()
         if pot.hasStones:
+            self.setCurrentPlayer()
             stoneNum = pot.stoneNum
             if self.selectedPlayer == 1:
                 self.player1Stones(index, stoneNum)

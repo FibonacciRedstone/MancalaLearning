@@ -1,10 +1,12 @@
-from GamePot import Pot
-from GameBoard import Board
-from Player import Player
 import itertools
 import math
+from datetime import datetime
+
+from GameBoard import Board
+from GamePot import Pot
+from Player import Player
+
 global currentIndex
-global gameStates
 
 def showBoard(board):
     line1 = "  " + str(board.potArray[11].stoneNum) + " * " + str(board.potArray[10].stoneNum) + " * " + str(board.potArray[9].stoneNum) + " | " + str(board.potArray[8].stoneNum) + " * " + str(board.potArray[7].stoneNum) + " * " + str(board.potArray[6].stoneNum)
@@ -30,12 +32,15 @@ def main(numOfGames):
             winningPlayerArray.append(battleVar[0])
         if battleVar[1].stateMoveDictionary != {}:
             winningPlayerArray.append(battleVar[1])
-
+    print "Initial Games Completed"
+    roundNum = 0
     winningPlayerAmount = 3
     while winningPlayerAmount > 2:
+        roundNum += 1
         combs = battleCombinations(winningPlayerArray)
         winningPlayerArray = getTopPlayers(combs)
         winningPlayerAmount = len(winningPlayerArray)
+        print "Round " + str(roundNum) + " Finished"
     if len(winningPlayerArray) == 2:
         if winningPlayerArray[0].winsAmount > winningPlayerArray[1].winsAmount:
             return winningPlayerArray[0]
@@ -68,6 +73,7 @@ def battleCombinations(players):
                     newPlayerArray.append(player)
             j+=1
         del players[0]
+        j = 1
     return newPlayerArray
 
 def getTopPlayers(inputPlayers):
@@ -99,7 +105,6 @@ def createPotArray():
     return pots
 
 def battle(board, player1, player2):
-    global currentIndex
     wins = []
     inGame = True
     while inGame:
@@ -121,8 +126,6 @@ def battle(board, player1, player2):
             return (player1, player2)
             break
             break
-    currentIndex += 1
-    print currentIndex
     return wins
 
 
@@ -157,14 +160,18 @@ def generateGameStates():
     del gameStates[0]
     return gameStates
 
-textFile = open("bestway.txt", "w")
-set = main(36000)
-textFile.write(str(set.stateMoveDictionary))
-textFile.write("\n")
-textFile.write("Number Of Wins: " + str(set.winsAmount))
-textFile.close()
+
+def run(startingAmount):
+    startTime = datetime.now()
+    textFile = open("bestway.txt", "w")
+    set = main(startingAmount)
+    textFile.write(str(set.stateMoveDictionary))
+    textFile.write("\n")
+    textFile.write("Number Of Wins: " + str(set.winsAmount))
+    textFile.close()
+    endTime = datetime.now()
+
+    print("Seconds: " + str((endTime - startTime).total_seconds()))
 
 
-
-
-
+run(10)

@@ -1,5 +1,3 @@
-from Pot import Pot
-
 class Board:
 
     potArray = []
@@ -14,13 +12,6 @@ class Board:
     def test(self):
         potIndex = self.askForIndex()
         return self.moveStonesAtIndex(potIndex)
-
-
-
-
-
-
-
 
     def player1Stones(self, index, stoneNum):
 
@@ -75,14 +66,9 @@ class Board:
             i+=1
         self.potArray[index].stoneNum -=stoneNum
 
-    def setCurrentPlayer(self, index):
+    def setCurrentPlayer(self):
 
-        length = len(self.potArray)
-
-        minP1 = 0
-        maxP1 = (length - (length/2))
-
-        if index >= minP1 and index <= maxP1:
+        if self.playNum % 2 == 0:
             self.selectedPlayer = 1
         else:
             self.selectedPlayer = 2
@@ -91,9 +77,10 @@ class Board:
     def moveStonesAtIndex(self, index):
         stone = self.potArray[index]
         self.checkPots()
+        self.setCurrentPlayer()
         if stone.hasStones:
             stoneNum = stone.stoneNum
-            self.setCurrentPlayer(index)
+            self.setCurrentPlayer()
             if self.selectedPlayer == 1:
                 self.player1Stones(index, stoneNum)
             else:
