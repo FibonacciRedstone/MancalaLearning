@@ -14,7 +14,8 @@ class Board:
     computerState = []
     gameStates = []
 
-    def getPermutations(self, inputArray, interable):
+    @staticmethod
+    def getPermutations(inputArray, interable):
         perms = list(itertools.permutations(inputArray, interable))
         returnPerms = list()
 
@@ -25,7 +26,7 @@ class Board:
                     if perm == permutation:
                         keepPerm = False
                         break
-                if keepPerm == True:
+                if keepPerm:
                     returnPerms.append(permutation)
             else:
                 returnPerms.append(permutation)
@@ -68,18 +69,18 @@ class Board:
         lastCheck = 0
         i = index + 1
         while i <= lastPot:
-            if i == (maxIndex1):
+            if i == maxIndex1:
                 self.storeP1 += 1
                 if lastPot == maxIndex1:
                     self.playNum -= 1
                     lastCheck = 1
                     # lastPot -= 1
                     # lastCheck = 1
-            if (i) >= length and lastCheck == 0:
+            if i >= length and lastCheck == 0:
                 self.potArray[i - length].stoneNum += 1
             elif lastCheck == 0:
                 self.potArray[i].stoneNum += 1
-                if i == (maxIndex1):
+                if i == maxIndex1:
                     lastPot -= 1
             lastCheck = 0
             i += 1
@@ -89,22 +90,17 @@ class Board:
 
         length = len(self.potArray)
 
-        maxIndex1 = (length / 2)
-        maxIndex2 = (length - 1)
-
         lastPot = (index + stoneNum)
         lastCheck = 0
         i = index + 1
-        while i >= index + 1 and i < lastPot + 1:
-            if i == (length):
+        while index + 1 <= i < lastPot + 1:
+            if i == length:
                 self.storeP2 += 1
                 if lastPot == length:
                     self.playNum -= 1
-                    lastCheck = 1
                 # lastPot -= 1
                 lastCheck = 1
             if i > length:
-                var = length
                 var = math.floor(i / length) * length
                 var = int(var)
                 self.potArray[i - var - 1].stoneNum += 1
@@ -140,7 +136,7 @@ class Board:
     def askForIndex(self):
         if self.playNum % 2 == 0:
             inputIndex = input("P1 Input Index: ")
-            if inputIndex > 5 and inputIndex < 12:
+            if 5 < inputIndex < 12:
                 print "Incorrect Index"
                 return self.askForIndex()
             else:
@@ -148,7 +144,7 @@ class Board:
                 return inputIndex
         else:
             self.setCurrentComputerState()
-            if (self.computer.stateMoveDictionary.values()[0] < 6):
+            if self.computer.stateMoveDictionary.values()[0] < 6:
                 for state in self.gameStates:
                     self.computer.stateMoveDictionary[tuple(state)] += 6
             inputIndex = self.computer.stateMoveDictionary[tuple(self.computerState)]
@@ -168,7 +164,7 @@ class Board:
     def checkGameOver(self):
         self.checkPots()
         if not self.potArray[0].hasStones and not self.potArray[1].hasStones and not self.potArray[2].hasStones and not \
-        self.potArray[3].hasStones and not self.potArray[4].hasStones and not self.potArray[5].hasStones:
+                self.potArray[3].hasStones and not self.potArray[4].hasStones and not self.potArray[5].hasStones:
             return 1
         if not self.potArray[11].hasStones and not self.potArray[10].hasStones and not self.potArray[
             9].hasStones and not \

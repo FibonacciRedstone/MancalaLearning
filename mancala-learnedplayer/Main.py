@@ -42,7 +42,6 @@ def main():
         gameOver = board.test()
         showBoard(board)
         if gameOver == 1:
-            inGame = False
             if board.storeP2 > board.storeP1:
                 print "Player 2 Won"
             elif board.storeP1 > board.storeP2:

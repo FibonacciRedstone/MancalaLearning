@@ -7,7 +7,6 @@ from Player import Player
 
 
 class Board:
-
     potArray = []
 
     gameStates = [[]]
@@ -30,8 +29,10 @@ class Board:
 
     def setCurrentPlayerStates(self):
 
-        self.player1State = [self.potArray[0].hasStones, self.potArray[1].hasStones, self.potArray[2].hasStones, self.potArray[3].hasStones, self.potArray[4].hasStones, self.potArray[5].hasStones]
-        self.player2State = [self.potArray[6].hasStones, self.potArray[7].hasStones, self.potArray[8].hasStones, self.potArray[9].hasStones, self.potArray[10].hasStones, self.potArray[11].hasStones]
+        self.player1State = [self.potArray[0].hasStones, self.potArray[1].hasStones, self.potArray[2].hasStones,
+                             self.potArray[3].hasStones, self.potArray[4].hasStones, self.potArray[5].hasStones]
+        self.player2State = [self.potArray[6].hasStones, self.potArray[7].hasStones, self.potArray[8].hasStones,
+                             self.potArray[9].hasStones, self.potArray[10].hasStones, self.potArray[11].hasStones]
 
     def test(self, player1, player2):
         self.setCurrentPlayerStates()
@@ -59,19 +60,20 @@ class Board:
         del gameStates[0]
         return gameStates
 
-    def randomizeList(self, inputArray):
-        randomKey = range(0, len(inputArray)-1)
+    @staticmethod
+    def randomizeList(inputArray):
+        randomKey = range(0, len(inputArray) - 1)
         shuffle(randomKey)
-        outputArray = range(0, len(inputArray)-1)
+        outputArray = range(0, len(inputArray) - 1)
 
         index = 0
         for i in randomKey:
             outputArray[index] = inputArray[i]
-            index+=1
+            index += 1
         return outputArray
 
-
-    def getPermutations(self, inputArray, interable):
+    @staticmethod
+    def getPermutations(inputArray, interable):
         perms = list(itertools.permutations(inputArray, interable))
         returnPerms = list()
 
@@ -82,71 +84,64 @@ class Board:
                     if perm == permutation:
                         keepPerm = False
                         break
-                if keepPerm == True:
+                if keepPerm:
                     returnPerms.append(permutation)
             else:
                 returnPerms.append(permutation)
         return returnPerms
 
-
     def player1Stones(self, index, stoneNum):
 
         length = len(self.potArray)
 
-        maxIndex1 = (length - (length/2))
+        maxIndex1 = (length - (length / 2))
 
         lastPot = (index + stoneNum)
         lastCheck = 0
         i = index + 1
         while i <= lastPot:
-            if i == (maxIndex1):
-                self.storeP1+=1
+            if i == maxIndex1:
+                self.storeP1 += 1
                 if lastPot == maxIndex1:
-                    self.playNum-=1
+                    self.playNum -= 1
                     lastCheck = 1
-                #lastPot -= 1
-                #lastCheck = 1
-            if (i) >= length and lastCheck == 0:
-                var = length
+                    # lastPot -= 1
+                    # lastCheck = 1
+            if i >= length and lastCheck == 0:
                 var = math.floor(i / length) * length
                 var = int(var)
                 self.potArray[i - var].stoneNum += 1
             elif lastCheck == 0:
                 self.potArray[i].stoneNum += 1
-                if i == (maxIndex1):
-                    lastPot-=1
+                if i == maxIndex1:
+                    lastPot -= 1
             lastCheck = 0
-            i+=1
+            i += 1
         self.potArray[index].stoneNum = 0
 
     def player2Stones(self, index, stoneNum):
 
         length = len(self.potArray)
 
-        maxIndex1 = (length / 2)
-        maxIndex2 = (length - 1)
-
         lastPot = (index + stoneNum)
         lastCheck = 0
         i = index + 1
-        while i >= index+1 and i < lastPot+1:
-            if i == (length):
+        while index + 1 <= i < lastPot + 1:
+            if i == length:
                 self.storeP2 += 1
                 if lastPot == length:
-                    self.playNum-=1
-                    lastCheck = 1
-                #lastPot -= 1
+                    self.playNum -= 1
+                # lastPot -= 1
                 lastCheck = 1
             if i > length:
-                var = length
-                var = math.floor(i/length)*length
+                var = math.floor(i / length) * length
                 var = int(var)
                 self.potArray[i - var - 1].stoneNum += 1
             elif lastCheck == 0:
                 self.potArray[i].stoneNum += 1
             lastCheck = 0
-            i+=1
-        self.potArray[index].stoneNum -=stoneNum
+            i += 1
+        self.potArray[index].stoneNum -= stoneNum
 
     def setCurrentPlayer(self):
 
@@ -154,7 +149,6 @@ class Board:
             self.selectedPlayer = 1
         else:
             self.selectedPlayer = 2
-
 
     def moveStonesAtIndex(self, index):
         pot = self.potArray[index]
@@ -172,9 +166,7 @@ class Board:
         else:
             print "Pot does not contain any stones!"
 
-
     def askForIndex(self):
-
 
         if self.playNum % 2 == 0:
             # Player 1
@@ -198,14 +190,14 @@ class Board:
 
     def checkGameOver(self):
         self.checkPots()
-        if not self.potArray[0].hasStones and not self.potArray[1].hasStones and not self.potArray[2].hasStones and not self.potArray[3].hasStones and not self.potArray[4].hasStones and not self.potArray[5].hasStones:
+        if not self.potArray[0].hasStones and not self.potArray[1].hasStones and not self.potArray[2].hasStones and not \
+                self.potArray[3].hasStones and not self.potArray[4].hasStones and not self.potArray[5].hasStones:
             return 1
-        if not self.potArray[11].hasStones and not self.potArray[10].hasStones and not self.potArray[9].hasStones and not \
-        self.potArray[8].hasStones and not self.potArray[7].hasStones and not self.potArray[6].hasStones:
+        if not self.potArray[11].hasStones and not self.potArray[10].hasStones and not self.potArray[
+            9].hasStones and not \
+                self.potArray[8].hasStones and not self.potArray[7].hasStones and not self.potArray[6].hasStones:
             return 1
         return 0
-
-
 
     def printValues(self):
         print "Store1 " + str(self.storeP1)
@@ -216,7 +208,8 @@ class Board:
             print i.stoneNum
             index += 1
 
-    def generateMoveFromState(self, state):
+    @staticmethod
+    def generateMoveFromState(state):
         movesArray = []
         for i in range(0, len(state)):
             if state[i] == 1:
@@ -239,13 +232,15 @@ class Board:
             stateMoveDict[tuple(state)] = move
         return stateMoveDict
 
-    def moveFromState(self, player, state):
+    @staticmethod
+    def moveFromState(player, state):
         return player.stateMoveDictionary[state]
 
-    def convertBooleanArrayToInt(self, boolArray):
+    @staticmethod
+    def convertBooleanArrayToInt(boolArray):
         intArray = []
         for boolean in boolArray:
-            if boolean == True:
+            if boolean:
                 intArray.append(1)
             else:
                 intArray.append(0)

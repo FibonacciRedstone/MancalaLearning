@@ -1,5 +1,4 @@
 class Player:
-
     stateMoveDictionary = {}
     winsAmount = 0
 

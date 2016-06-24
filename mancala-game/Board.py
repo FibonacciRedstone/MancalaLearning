@@ -1,5 +1,4 @@
 class Board:
-
     potArray = []
     storeP1 = 0
     storeP2 = 0
@@ -17,54 +16,50 @@ class Board:
 
         length = len(self.potArray)
 
-        maxIndex1 = (length - (length/2))
+        maxIndex1 = (length - (length / 2))
 
         lastPot = (index + stoneNum)
         lastCheck = 0
         i = index + 1
         while i <= lastPot:
-            if i == (maxIndex1):
-                self.storeP1+=1
+            if i == maxIndex1:
+                self.storeP1 += 1
                 if lastPot == maxIndex1:
-                    self.playNum-=1
+                    self.playNum -= 1
                     lastCheck = 1
-                #lastPot -= 1
-                #lastCheck = 1
-            if (i) >= length and lastCheck == 0:
+                    # lastPot -= 1
+                    # lastCheck = 1
+            if i >= length and lastCheck == 0:
                 self.potArray[i - length].stoneNum += 1
             elif lastCheck == 0:
                 self.potArray[i].stoneNum += 1
-                if i == (maxIndex1):
-                    lastPot-=1
+                if i == maxIndex1:
+                    lastPot -= 1
             lastCheck = 0
-            i+=1
+            i += 1
         self.potArray[index].stoneNum = 0
 
     def player2Stones(self, index, stoneNum):
 
         length = len(self.potArray)
 
-        maxIndex1 = (length / 2)
-        maxIndex2 = (length - 1)
-
         lastPot = (index + stoneNum)
         lastCheck = 0
         i = index + 1
-        while i >= index+1 and i < lastPot+1:
-            if i == (length):
+        while index + 1 <= i < lastPot + 1:
+            if i == length:
                 self.storeP2 += 1
                 if lastPot == length:
-                    self.playNum-=1
-                    lastCheck = 1
-                #lastPot -= 1
+                    self.playNum -= 1
+                # lastPot -= 1
                 lastCheck = 1
             if i > length:
                 self.potArray[i - length - 1].stoneNum += 1
             elif lastCheck == 0:
                 self.potArray[i].stoneNum += 1
             lastCheck = 0
-            i+=1
-        self.potArray[index].stoneNum -=stoneNum
+            i += 1
+        self.potArray[index].stoneNum -= stoneNum
 
     def setCurrentPlayer(self):
 
@@ -72,7 +67,6 @@ class Board:
             self.selectedPlayer = 1
         else:
             self.selectedPlayer = 2
-
 
     def moveStonesAtIndex(self, index):
         stone = self.potArray[index]
@@ -90,11 +84,10 @@ class Board:
         else:
             print "Pot does not contain any stones!"
 
-
     def askForIndex(self):
-        if self.playNum%2 == 0:
+        if self.playNum % 2 == 0:
             inputIndex = input("P1 Input Index: ")
-            if inputIndex > 5 and inputIndex < 12:
+            if 5 < inputIndex < 12:
                 print "Incorrect Index"
                 return self.askForIndex()
             else:
@@ -102,16 +95,12 @@ class Board:
                 return inputIndex
         else:
             inputIndex = input("P2 Input Index: ")
-            if inputIndex < 6 and inputIndex >= 0:
+            if 6 > inputIndex >= 0:
                 print "Incorrect Index"
                 return self.askForIndex()
             else:
                 self.selectedPlayer = 2
                 return inputIndex
-
-
-
-
 
     def checkPots(self):
         for pot in self.potArray:
@@ -122,14 +111,14 @@ class Board:
 
     def checkGameOver(self):
         self.checkPots()
-        if not self.potArray[0].hasStones and not self.potArray[1].hasStones and not self.potArray[2].hasStones and not self.potArray[3].hasStones and not self.potArray[4].hasStones and not self.potArray[5].hasStones:
+        if not self.potArray[0].hasStones and not self.potArray[1].hasStones and not self.potArray[2].hasStones and not \
+                self.potArray[3].hasStones and not self.potArray[4].hasStones and not self.potArray[5].hasStones:
             return 1
-        if not self.potArray[11].hasStones and not self.potArray[10].hasStones and not self.potArray[9].hasStones and not \
-        self.potArray[8].hasStones and not self.potArray[7].hasStones and not self.potArray[6].hasStones:
+        if not self.potArray[11].hasStones and not self.potArray[10].hasStones and not self.potArray[
+            9].hasStones and not \
+                self.potArray[8].hasStones and not self.potArray[7].hasStones and not self.potArray[6].hasStones:
             return 1
         return 0
-
-
 
     def printValues(self):
         print "Store1 " + str(self.storeP1)
